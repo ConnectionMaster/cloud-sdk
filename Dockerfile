@@ -2,7 +2,7 @@
 # Set the base image for subsequent instructions:
 #------------------------------------------------------------------------------
 
-FROM alpine:3.5
+FROM alpine:3.6
 MAINTAINER Marc Villacorta Morera <marc.villacorta@gmail.com>
 
 #------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ ENV PATH="/google-cloud-sdk/bin:${PATH}" \
 # Install:
 #------------------------------------------------------------------------------
 
-RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl \
+RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl ssh \
     && curl -O ${SDK_URL}/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
     && echo "${SHA256SUM}  google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
     > google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
