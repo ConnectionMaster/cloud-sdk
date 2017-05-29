@@ -9,8 +9,8 @@ MAINTAINER Marc Villacorta Morera <marc.villacorta@gmail.com>
 # Build-time arguments:
 #------------------------------------------------------------------------------
 
-ARG CLOUD_SDK_VERSION=156.0.0
-ARG SHA256SUM=f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851
+ARG CLOUD_SDK_VERSION="156.0.0"
+ARG SHA256SUM="f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851"
 
 #------------------------------------------------------------------------------
 # Environment variables:
@@ -18,7 +18,8 @@ ARG SHA256SUM=f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851
 
 ENV PATH="/google-cloud-sdk/bin:${PATH}" \
     SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads" \
-    HELM_URL="https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get"
+    HELM_URL="https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get" \
+    PLUGIN_URL="https://github.com/app-registry/helm-plugin/releases/download/v0.4.0"
 
 #------------------------------------------------------------------------------
 # Install:
@@ -34,4 +35,7 @@ RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl opens
     && gcloud config set core/disable_usage_reporting true \
     && gcloud config set component_manager/disable_update_check true \
     && gcloud -q components install kubectl \
-    && curl -s ${HELM_URL} | sed 's/\<sudo\>//g' | bash
+    && curl -s ${HELM_URL} | sed 's/\<sudo\>//g' | bash \
+    && curl -L ${PLUGIN_URL}/registry-helm-plugin-v0.4.0-linux-x64.tar.gz -o \
+    registry-helm-plugin.tar.gz && mkdir -p ~/.helm/plugins \
+    && tar xzvf registry-helm-plugin.tar.gz && rm -f *.gz /var/cache/apk/*
