@@ -10,7 +10,8 @@ MAINTAINER Marc Villacorta Morera <marc.villacorta@gmail.com>
 #------------------------------------------------------------------------------
 
 ARG CLOUD_SDK_VERSION="156.0.0"
-ARG SHA256SUM="f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851"
+ARG CLOUD_SDK_SHA256SUM="f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851"
+ARG HRP_VERSION="v0.4.0"
 
 #------------------------------------------------------------------------------
 # Environment variables:
@@ -19,15 +20,15 @@ ARG SHA256SUM="f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851"
 ENV PATH="/google-cloud-sdk/bin:${PATH}" \
     SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads" \
     HELM_URL="https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get" \
-    PLUGIN_URL="https://github.com/app-registry/helm-plugin/releases/download/v0.4.0"
+    HRP_URL="https://github.com/app-registry/helm-plugin/releases/download/${HRP_VERSION}"
 
 #------------------------------------------------------------------------------
 # Install:
 #------------------------------------------------------------------------------
 
 RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl openssh-client \
-    && curl -O ${SDK_URL}/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
-    && echo "${SHA256SUM}  google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
+    && curl -OL ${SDK_URL}/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
+    && echo "${CLOUD_SDK_SHA256SUM}  google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
     > google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
     && sha256sum -c google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
     && tar xzf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
@@ -36,6 +37,6 @@ RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl opens
     && gcloud config set component_manager/disable_update_check true \
     && gcloud -q components install kubectl \
     && curl -s ${HELM_URL} | sed 's/\<sudo\>//g' | bash \
-    && curl -L ${PLUGIN_URL}/registry-helm-plugin-v0.4.0-linux-x64.tar.gz -o \
-    registry-helm-plugin.tar.gz && mkdir -p ~/.helm/plugins \
-    && tar xzvf registry-helm-plugin.tar.gz && rm -f *.gz /var/cache/apk/*
+    && HRP_TARBALL="registry-helm-plugin-${HRP_VERSION}-linux-x64.tar.gz" \
+    && curl -OL ${HRP_URL}/${HRP_TARBALL} && mkdir -p ~/.helm/plugins \
+    && tar xzvf ${HRP_TARBALL} -C ~/.helm/plugins && rm -f *.gz /var/cache/apk/*
