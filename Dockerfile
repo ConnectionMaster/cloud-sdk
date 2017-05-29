@@ -26,7 +26,7 @@ ENV PATH="/google-cloud-sdk/bin:${PATH}" \
 # Install:
 #------------------------------------------------------------------------------
 
-RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl openssh-client \
+RUN apk --no-cache add curl python py-crcmod bash libc6-compat git openssl jq openssh-client \
     && curl -OL ${SDK_URL}/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
     && echo "${CLOUD_SDK_SHA256SUM}  google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
     > google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
