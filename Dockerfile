@@ -11,7 +11,7 @@ MAINTAINER Marc Villacorta Morera <marc.villacorta@gmail.com>
 
 ARG CLOUD_SDK_VERSION="156.0.0"
 ARG CLOUD_SDK_SHA256SUM="f47f41e7c389301dfee4879d6eb71d36c7b06aaf43a2be49a9ea39749be22851"
-ARG HRP_VERSION="v0.4.1"
+ARG HRP_VERSION="0.4.1"
 
 #------------------------------------------------------------------------------
 # Environment variables:
@@ -20,7 +20,7 @@ ARG HRP_VERSION="v0.4.1"
 ENV PATH="/google-cloud-sdk/bin:${PATH}" \
     SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads" \
     HELM_URL="https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get" \
-    HRP_URL="https://github.com/app-registry/appr-helm-plugin/releases/download/${HRP_VERSION}"
+    HRP_URL="https://github.com/app-registry/appr-helm-plugin/releases/download/v${HRP_VERSION}"
 
 #------------------------------------------------------------------------------
 # Install:
@@ -40,6 +40,6 @@ RUN apk --no-cache add -U curl python py-crcmod bash libc6-compat git openssl \
     && curl -s ${HELM_URL} | sed 's/\<sudo\>//g' | bash \
     && curl -OL ${HRP_URL}/registry-helm-plugin.tar.gz && mkdir -p ~/.helm/plugins \
     && tar xzvf registry-helm-plugin.tar.gz -C ~/.helm/plugins \
-    && rm -f ~/.helm/plugins/registry/cnr && pip install cnr \
+    && rm -f ~/.helm/plugins/registry/cnr && pip install cnr==${HRP_VERSION} \
     && ln -s $(which cnr) ~/.helm/plugins/registry/cnr \
     && apk del --purge dev && rm -f *.gz /var/cache/apk/*
