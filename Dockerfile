@@ -1,17 +1,17 @@
 #------------------------------------------------------------------------------
-# Set the base image for subsequent instructions:
+# Base image:
 #------------------------------------------------------------------------------
 
-FROM alpine:3.6
-MAINTAINER Marc Villacorta Morera <marc.villacorta@gmail.com>
+FROM docker:17
 
 #------------------------------------------------------------------------------
 # Build-time arguments:
 #------------------------------------------------------------------------------
 
-ARG CLOUD_SDK_VERSION="159.0.0"
-ARG CLOUD_SDK_SHA256SUM="5b408575407514f99ad913bd0c6991be4b46408ddc7080a6494bbf43e6ce222a"
-ARG HRP_VERSION="0.4.1"
+ARG CLOUD_SDK_VERSION="169.0.0"
+ARG HELM_VERSION="2.6.1"
+ARG HRP_VERSION="0.7.0"
+ARG APPR_VERSION="0.7.3"
 
 #------------------------------------------------------------------------------
 # Environment variables:
@@ -26,20 +26,15 @@ ENV PATH="/google-cloud-sdk/bin:${PATH}" \
 # Install:
 #------------------------------------------------------------------------------
 
-RUN apk --no-cache add -U curl python py-crcmod bash libc6-compat git openssl \
-    jq openssh-client && apk --no-cache add -U -t dev py2-pip \
+RUN apk --no-cache add -U curl python py-crcmod bash libc6-compat git \
+    jq openssl openssh-client \
     && curl -OL ${SDK_URL}/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
-    && echo "${CLOUD_SDK_SHA256SUM}  google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
-    > google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
-    && sha256sum -c google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz.sha256 \
-    && tar xzf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
-    && rm -f google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.* \
-    && gcloud config set core/disable_usage_reporting true \
+    && tar zxf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz \
     && gcloud config set component_manager/disable_update_check true \
+    && gcloud config set core/disable_usage_reporting true \
     && gcloud -q components install kubectl \
-    && curl -s ${HELM_URL} | sed 's/\<sudo\>//g' | bash \
-    && curl -OL ${HRP_URL}/registry-helm-plugin.tar.gz && mkdir -p ~/.helm/plugins \
-    && tar xzvf registry-helm-plugin.tar.gz -C ~/.helm/plugins \
-    && rm -f ~/.helm/plugins/registry/cnr && pip install cnr==${HRP_VERSION} \
-    && ln -s $(which cnr) ~/.helm/plugins/registry/cnr \
-    && apk del --purge dev && rm -f *.gz /var/cache/apk/*
+    && curl -s ${HELM_URL} | DESIRED_VERSION="v${HELM_VERSION}" bash \
+    && curl -OL ${HRP_URL}/helm-registry_linux.tar.gz && mkdir -p ~/.helm/plugins \
+    && tar zxf helm-registry_linux.tar.gz -C ~/.helm/plugins \
+    && helm registry upgrade-plugin v${APPR_VERSION} \
+    && rm -f *.gz /var/cache/apk/*
