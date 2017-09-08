@@ -39,3 +39,9 @@ RUN SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-c
     && gcloud -q components install kubectl \
     && helm registry upgrade-plugin v${APPR_VERSION} \
     && rm -f /var/cache/apk/*
+
+#------------------------------------------------------------------------------
+# Entrypoint:
+#------------------------------------------------------------------------------
+
+ENTRYPOINT ["/bin/bash"]
