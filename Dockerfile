@@ -36,6 +36,7 @@ RUN SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-c
     && curl -L ${HELM_URL} | DESIRED_VERSION="v${HELM_VERSION}" bash \
     && gcloud config set component_manager/disable_update_check true \
     && gcloud config set core/disable_usage_reporting true \
+    && gcloud config set metrics/environment github_docker_image \
     && gcloud -q components install kubectl \
     && helm registry upgrade-plugin v${APPR_VERSION} \
     && rm -f /var/cache/apk/*
