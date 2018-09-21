@@ -8,7 +8,7 @@ FROM alpine:3.6
 # Build-time arguments:
 #------------------------------------------------------------------------------
 
-ARG SDK_VERSION="176.0.0"
+ARG SDK_VERSION="217.0.0"
 ARG DOCKER_VERSION="17.03.2-ce"
 ARG HELM_VERSION="2.10.0"
 ARG HRP_VERSION="0.7.0"
