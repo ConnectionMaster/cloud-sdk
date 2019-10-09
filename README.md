@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This repository is deprecated.
+
 # cloud-sdk
 
 Google Cloud SDK
